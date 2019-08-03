@@ -2,6 +2,7 @@ package me.pqpo.smartcamera;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
@@ -55,6 +56,17 @@ public class MainActivity extends AppCompatActivity {
                 mCameraView.stopScan();
             }
         });
+
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            int REQUEST_CODE_CONTACT = 101;
+//            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//            for (String str : permissions) {
+//                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+//                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+//                    return;
+//                }
+//            }
+//        }
 
         initMaskView();
         initScannerParams();
@@ -187,12 +199,13 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 int width = mCameraView.getWidth();
                 int height = mCameraView.getHeight();
-                if (width < height) {
-                    maskView.setMaskSize((int) (width * 0.6f), (int) (width * 0.6f / 0.63));
-                    maskView.setMaskOffset(0, -(int)(width * 0.1));
-                } else {
-                    maskView.setMaskSize((int) (width * 0.6f), (int) (width * 0.6f * 0.63));
-                }
+                maskView.setMaskSize((int) width , height);
+//                if (width < height) {
+//                    maskView.setMaskSize((int) (width * 0.6f), (int) (width * 0.6f / 0.63));
+//                    maskView.setMaskOffset(0, -(int)(width * 0.1));
+//                } else {
+//                    maskView.setMaskSize((int) (width * 0.6f), (int) (width * 0.6f * 0.63));
+//                }
             }
         });
         mCameraView.setMaskView(maskView);

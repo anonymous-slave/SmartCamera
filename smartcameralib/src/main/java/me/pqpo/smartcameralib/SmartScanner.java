@@ -3,6 +3,7 @@ package me.pqpo.smartcameralib;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * Created by pqpo on 2018/8/16.
@@ -109,6 +110,8 @@ public class SmartScanner {
     public int previewScan(@NonNull byte[] yuvData, int width, int height, int rotation, @NonNull Rect maskRect) {
         int maskW = maskRect.width();
         int maskH = maskRect.height();
+        Log.d("preview_width",Integer.toString(width));
+        Log.d("preview_height",Integer.toString(height));
         if (yuvData.length == 0 || maskH <= 0 || maskW <= 0) {
             return 0;
         }

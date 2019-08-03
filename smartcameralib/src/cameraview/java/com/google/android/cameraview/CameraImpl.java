@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v4.util.SparseArrayCompat;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
 
@@ -132,6 +133,8 @@ public class CameraImpl {
 
         int width = mCameraParameters.getPreviewSize().width;
         int height = mCameraParameters.getPreviewSize().height;
+        Log.d("Camera_width",Integer.toString(width));
+        Log.d("Camera_height",Integer.toString(height));
         previewBuffer = new byte[width * height * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
         mCamera.addCallbackBuffer(previewBuffer);
         mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
