@@ -5,10 +5,15 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.cameraview.CameraImpl;
+import com.google.android.cameraview.base.Size;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.Observer;
@@ -23,6 +29,7 @@ import io.reactivex.disposables.Disposable;
 import me.pqpo.smartcameralib.MaskView;
 import me.pqpo.smartcameralib.SmartCameraView;
 import me.pqpo.smartcameralib.SmartScanner;
+import me.pqpo.smartcameralib.utils.TCPClient;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     private ImageView ivDialog;
     private boolean granted = false;
+    private static TCPClient mTcpClient;
 
     protected void onCreate(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -52,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         ivPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCameraView.takePicture();
-                mCameraView.stopScan();
+//                mCameraView.takePicture();
+//                mCameraView.stopScan();
             }
         });
 
@@ -71,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
         initMaskView();
         initScannerParams();
         initCameraView();
+
+//        new connectTask().execute("");
 
         new RxPermissions(this).request(Manifest.permission.CAMERA)
                 .subscribe(new Observer<Boolean>() {
@@ -103,6 +113,47 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
+
+//
+//    public static class connectTask extends AsyncTask<String,String,TCPClient> {
+//
+//        @Override
+//        protected TCPClient doInBackground(String... message) {
+//
+//            //we create a TCPClient object and
+//            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
+//                @Override
+//                //here the messageReceived method is implemented
+//                public void messageReceived(String message) {
+//                    //this method calls the onProgressUpdate
+//                    publishProgress(message);
+////                    Log.e("tcpReceived1", message);
+//                }
+//            });
+//            mTcpClient.run();
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//            Log.e("tcpReceived", values[0]);
+//
+////            //in the arrayList we add the messaged received from server
+////            arrayList.add(values[0]);
+////            // notify the adapter that the data set has changed. This means that new message received
+////            // from server was added to the list
+////            mAdapter.notifyDataSetChanged();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mTcpClient.sendMessage("6666");
+//                }
+//            }).start();
+//
+//        }
+//    }
 
     private void initScannerParams() {
         SmartScanner.DEBUG = true;
@@ -149,15 +200,15 @@ public class MainActivity extends AppCompatActivity {
                 if (previewBitmap != null) {
                     ivPreview.setImageBitmap(previewBitmap);
                 }
-//                if (result == 1) {
-//                    Size pictureSize = smartCameraView.getPreviewSize();
-//                    int rotation = smartCameraView.getPreviewRotation();
-//                    Rect maskRect = mCameraView.getAdjustPreviewMaskRect();
-//                    Bitmap bitmap = mCameraView.cropYuvImage(yuvData, pictureSize.getWidth(), pictureSize.getHeight(), maskRect, rotation);
-//                    if (bitmap != null) {
-//                        showPicture(bitmap);
-//                    }
-//                }
+                if (result == 1) {
+                    Size pictureSize = smartCameraView.getPreviewSize();
+                    int rotation = smartCameraView.getPreviewRotation();
+                    Rect maskRect = mCameraView.getAdjustPreviewMaskRect();
+                    Bitmap bitmap = mCameraView.cropYuvImage(yuvData, pictureSize.getWidth(), pictureSize.getHeight(), maskRect, rotation);
+                    if (bitmap != null) {
+                        showPicture(bitmap);
+                    }
+                }
                 return false;
             }
         });

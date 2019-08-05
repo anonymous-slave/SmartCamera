@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +26,7 @@ import java.io.FileOutputStream;
 import java.util.UUID;
 
 import me.pqpo.smartcameralib.utils.BitmapUtil;
+import me.pqpo.smartcameralib.utils.TCPClient;
 
 /**
  * Created by pqpo on 2018/8/15.
@@ -39,6 +41,7 @@ public class SmartCameraView extends CameraView {
     protected boolean scanning = true;
     private Handler uiHandler;
     private OnScanResultListener onScanResultListener;
+    private static TCPClient mTcpClient;
 
     public SmartCameraView(@NonNull Context context) {
         this(context, null);
@@ -57,6 +60,7 @@ public class SmartCameraView extends CameraView {
     private void init() {
         smartScanner = new SmartScanner();
         uiHandler = new ScanResultHandler(this);
+        new connectTask().execute("");
 
         addCallback(new CameraImpl.Callback() {
             @Override
@@ -71,14 +75,18 @@ public class SmartCameraView extends CameraView {
                 if (revisedMaskRect != null && size != null) {
 //                    int result = smartScanner.previewScan(data, size.getWidth(), size.getHeight(), previewRotation, revisedMaskRect);
 //                    uiHandler.obtainMessage(result, data).sendToTarget();
-                    Bitmap bm = rawByteArray2RGBABitmap2(data, size.getWidth(), size.getHeight());
-                    bm = Bitmap.createScaledBitmap(bm, 1920, 1080, true);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-                    byte[] b = baos.toByteArray();
-                    String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
 
-                    //Storage the image to sdcard
+                    //Process the image
+//                    Bitmap bm = rawByteArray2RGBABitmap2(data, size.getWidth(), size.getHeight());
+//                    bm = Bitmap.createScaledBitmap(bm, 1920, 1080, true);
+//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+//                    byte[] b = baos.toByteArray();
+//                    String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
+
+                    new ImgThread(data,size,mTcpClient).start();
+
+                    //Save the image to sdcard
 //                    try {
 //                        String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/smart_camera/";
 //                        String fileName = UUID.randomUUID().toString();
@@ -95,10 +103,45 @@ public class SmartCameraView extends CameraView {
 //                        e.printStackTrace();
 //                    }
 
-                    Log.d("base64_encoding",encodedImage);
+//                    Log.d("base64_encoding",encodedImage);
                 }
             }
         });
+    }
+
+    public static class connectTask extends AsyncTask<String,String, TCPClient> {
+
+        @Override
+        protected TCPClient doInBackground(String... message) {
+
+            //we create a TCPClient object and
+            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
+                @Override
+                //here the messageReceived method is implemented
+                public void messageReceived(String message) {
+                    //this method calls the onProgressUpdate
+                    publishProgress(message);
+//                    Log.e("tcpReceived3", message);
+                }
+            });
+            mTcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            Log.e("tcpReceived2", values[0]);
+
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mTcpClient.sendMessage("6666");
+//                }
+//            }).start();
+
+        }
     }
 
     public Bitmap rawByteArray2RGBABitmap2(byte[] data, int width, int height) {
