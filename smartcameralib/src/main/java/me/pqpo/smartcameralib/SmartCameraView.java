@@ -43,6 +43,17 @@ public class SmartCameraView extends CameraView {
     private OnScanResultListener onScanResultListener;
     private static TCPClient mTcpClient;
 
+    public byte[] datanow;
+    public Size sizenow;
+
+    public byte[] getDatanow() {
+        return datanow;
+    }
+
+    public Size getSizenow() {
+        return sizenow;
+    }
+
     public SmartCameraView(@NonNull Context context) {
         this(context, null);
     }
@@ -60,7 +71,7 @@ public class SmartCameraView extends CameraView {
     private void init() {
         smartScanner = new SmartScanner();
         uiHandler = new ScanResultHandler(this);
-        new connectTask().execute("");
+//        new connectTask().execute("");
 
         addCallback(new CameraImpl.Callback() {
             @Override
@@ -76,17 +87,10 @@ public class SmartCameraView extends CameraView {
 //                    int result = smartScanner.previewScan(data, size.getWidth(), size.getHeight(), previewRotation, revisedMaskRect);
 //                    uiHandler.obtainMessage(result, data).sendToTarget();
 
-                    //Process the image
-//                    Bitmap bm = rawByteArray2RGBABitmap2(data, size.getWidth(), size.getHeight());
-//                    bm = Bitmap.createScaledBitmap(bm, 1920, 1080, true);
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-//                    byte[] b = baos.toByteArray();
-//                    String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
+                      datanow = data;
+                      sizenow = size;
 
-                    new ImgThread(data,size,mTcpClient).start();
-
-                    //Save the image to sdcard
+//                    //Save the image to sdcard
 //                    try {
 //                        String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/smart_camera/";
 //                        String fileName = UUID.randomUUID().toString();

@@ -26,6 +26,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import me.pqpo.smartcameralib.ImgThread;
 import me.pqpo.smartcameralib.MaskView;
 import me.pqpo.smartcameralib.SmartCameraView;
 import me.pqpo.smartcameralib.SmartScanner;
@@ -34,7 +35,7 @@ import me.pqpo.smartcameralib.utils.TCPClient;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SmartCameraView mCameraView;
+    private static SmartCameraView mCameraView;
     private ImageView ivPreview;
     private AlertDialog alertDialog;
     private ImageView ivDialog;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         ivPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                new ImgThread(mCameraView,mTcpClient).start();
+                new connectTask().execute("");
 //                mCameraView.takePicture();
 //                mCameraView.stopScan();
             }
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         initScannerParams();
         initCameraView();
 
-//        new connectTask().execute("");
+
 
         new RxPermissions(this).request(Manifest.permission.CAMERA)
                 .subscribe(new Observer<Boolean>() {
@@ -115,45 +118,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //
-//    public static class connectTask extends AsyncTask<String,String,TCPClient> {
-//
-//        @Override
-//        protected TCPClient doInBackground(String... message) {
-//
-//            //we create a TCPClient object and
-//            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
-//                @Override
-//                //here the messageReceived method is implemented
-//                public void messageReceived(String message) {
-//                    //this method calls the onProgressUpdate
-//                    publishProgress(message);
-////                    Log.e("tcpReceived1", message);
-//                }
-//            });
-//            mTcpClient.run();
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(String... values) {
-//            super.onProgressUpdate(values);
-//            Log.e("tcpReceived", values[0]);
-//
-////            //in the arrayList we add the messaged received from server
-////            arrayList.add(values[0]);
-////            // notify the adapter that the data set has changed. This means that new message received
-////            // from server was added to the list
-////            mAdapter.notifyDataSetChanged();
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mTcpClient.sendMessage("6666");
-//                }
-//            }).start();
-//
-//        }
-//    }
+    public static class connectTask extends AsyncTask<String,String,TCPClient> {
+
+        @Override
+        protected TCPClient doInBackground(String... message) {
+
+            //we create a TCPClient object and
+            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
+                @Override
+                //here the messageReceived method is implemented
+                public void messageReceived(String message) {
+                    //this method calls the onProgressUpdate
+                    publishProgress(message);
+//                    Log.e("tcpReceived1", message);
+                }
+            });
+            mTcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            Log.e("tcpReceived", values[0]);
+
+//            //in the arrayList we add the messaged received from server
+//            arrayList.add(values[0]);
+//            // notify the adapter that the data set has changed. This means that new message received
+//            // from server was added to the list
+//            mAdapter.notifyDataSetChanged();
+            new ImgThread(mCameraView,mTcpClient).start();
+
+        }
+    }
 
     private void initScannerParams() {
         SmartScanner.DEBUG = true;
