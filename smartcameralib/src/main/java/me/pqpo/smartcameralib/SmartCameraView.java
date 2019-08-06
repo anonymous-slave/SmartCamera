@@ -113,40 +113,40 @@ public class SmartCameraView extends CameraView {
         });
     }
 
-    public static class connectTask extends AsyncTask<String,String, TCPClient> {
-
-        @Override
-        protected TCPClient doInBackground(String... message) {
-
-            //we create a TCPClient object and
-            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
-                @Override
-                //here the messageReceived method is implemented
-                public void messageReceived(String message) {
-                    //this method calls the onProgressUpdate
-                    publishProgress(message);
-//                    Log.e("tcpReceived3", message);
-                }
-            });
-            mTcpClient.run();
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-            Log.e("tcpReceived2", values[0]);
-
-//            new Thread(new Runnable() {
+//    public static class connectTask extends AsyncTask<String,String, TCPClient> {
+//
+//        @Override
+//        protected TCPClient doInBackground(String... message) {
+//
+//            //we create a TCPClient object and
+//            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
 //                @Override
-//                public void run() {
-//                    mTcpClient.sendMessage("6666");
+//                //here the messageReceived method is implemented
+//                public void messageReceived(String message) {
+//                    //this method calls the onProgressUpdate
+//                    publishProgress(message);
+////                    Log.e("tcpReceived3", message);
 //                }
-//            }).start();
-
-        }
-    }
+//            });
+//            mTcpClient.run();
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+//            Log.e("tcpReceived2", values[0]);
+//
+////            new Thread(new Runnable() {
+////                @Override
+////                public void run() {
+////                    mTcpClient.sendMessage("6666");
+////                }
+////            }).start();
+//
+//        }
+//    }
 
     public Bitmap rawByteArray2RGBABitmap2(byte[] data, int width, int height) {
         int frameSize = width * height;

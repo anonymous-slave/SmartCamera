@@ -1,6 +1,9 @@
 package me.pqpo.smartcameralib;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
@@ -19,6 +22,7 @@ public class ImgThread extends Thread{
     private Size size;
     private TCPClient myTcpClient;
     private SmartCameraView camera;
+    private String timestamp;
 
 
 //    public ImgThread(byte[] data, Size size, TCPClient mTcpClient){
@@ -27,18 +31,44 @@ public class ImgThread extends Thread{
 //        this.myTcpClient = mTcpClient;
 //    }
 
-    public ImgThread(SmartCameraView smartCameraView, TCPClient mTcpClient){
+    public ImgThread(SmartCameraView smartCameraView, TCPClient mTcpClient, String timestamp){
         this.camera = smartCameraView;
         this.myTcpClient = mTcpClient;
+        this.timestamp = timestamp;
     }
 
     @Override
     public void run() {
 //        Bitmap bm = rawByteArray2RGBABitmap2(this.data, this.size.getWidth(), this.size.getHeight());
         size = camera.getSizenow();
-        Bitmap bm = rawByteArray2RGBABitmap2(camera.getDatanow(), size.getWidth(), size.getHeight());
+        int width = size.getWidth();
+        int height = size.getHeight();
 
-        bm = Bitmap.createScaledBitmap(bm, 1920, 1080, true);
+        int dstWidth = 1920;
+        int dstHeight = 1080;
+
+        Bitmap bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
+
+        bm = Bitmap.createScaledBitmap(bm, dstWidth, dstHeight, true);
+
+        //add the timestamp
+        Canvas canvas=new Canvas(bm);//创建一个空画布，并给画布设置位图
+        Paint p=new Paint();
+
+        p.setColor(Color.WHITE);       //设置画笔颜色
+        p.setStyle(Paint.Style.FILL);  //设置画笔模式为填充
+        p.setStrokeWidth(10f);         //设置画笔宽度为10px
+        canvas.drawRect(Math.round(dstWidth * 3 / 4),Math.round(dstHeight * 3 / 4),width,height,p);
+
+
+        p.setColor(Color.BLACK);//设置画笔颜色
+        p.setAntiAlias(true);//抗锯齿
+        p.setTextSize(60);//设置字体大小
+        canvas.drawText(this.timestamp,Math.round(dstWidth  * 3 / 4) + 20,Math.round(dstHeight * 3 / 4)+130,p);//在画布上绘制文字，即在位图上绘制文字
+
+        Log.e("width:",Integer.toString(Math.round(dstWidth * 3 / 4)));
+        Log.e("height:",Integer.toString(Math.round(dstHeight * 3 / 4)));
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();

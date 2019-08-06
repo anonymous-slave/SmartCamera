@@ -30,8 +30,8 @@ public class TCPClient {
      */
     public void sendMessage(String message){
         if (out != null && !out.checkError()) {
-            Log.e("Send Msg",message);
-            Log.e("Send Msg Length",Integer.toString(message.length()));
+//            Log.e("Send Msg",message);
+//            Log.e("Send Msg Length",Integer.toString(message.length()));
             out.println(message);
             out.flush();
 

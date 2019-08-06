@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 //            // notify the adapter that the data set has changed. This means that new message received
 //            // from server was added to the list
 //            mAdapter.notifyDataSetChanged();
-            new ImgThread(mCameraView,mTcpClient).start();
+            new ImgThread(mCameraView,mTcpClient,values[0]).start();
 
         }
     }
