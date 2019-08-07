@@ -49,6 +49,7 @@ public class ImgThread extends Thread{
 
         int dstWidth = 1920;
         int dstHeight = 1080;
+        int quality = 100;
 
         if (imgMode.equals("camera")){
             bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
@@ -80,7 +81,7 @@ public class ImgThread extends Thread{
         Log.e("height:",Integer.toString(Math.round(dstHeight * 3 / 4)));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, quality, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
         this.myTcpClient.sendMessage(Integer.toString(encodedImage.length()));
