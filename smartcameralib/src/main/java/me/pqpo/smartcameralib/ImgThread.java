@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class ImgThread extends Thread{
     private TCPClient myTcpClient;
     private SmartCameraView camera;
     private String timestamp;
+    private String imgMode = "video"; // video & camera
 
 
 //    public ImgThread(byte[] data, Size size, TCPClient mTcpClient){
@@ -40,6 +42,7 @@ public class ImgThread extends Thread{
     @Override
     public void run() {
 //        Bitmap bm = rawByteArray2RGBABitmap2(this.data, this.size.getWidth(), this.size.getHeight());
+        Bitmap bm;
         size = camera.getSizenow();
         int width = size.getWidth();
         int height = size.getHeight();
@@ -47,7 +50,14 @@ public class ImgThread extends Thread{
         int dstWidth = 1920;
         int dstHeight = 1080;
 
-        Bitmap bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
+        if (imgMode.equals("camera")){
+            bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
+        }else{
+            long timeStamp = System.currentTimeMillis();
+            Log.e("Video TimeStamp", Long.toString(timeStamp%60000*1000));
+            bm = getVideoThumnail("output.mkv", timeStamp%60000*1000);
+        }
+
 
         bm = Bitmap.createScaledBitmap(bm, dstWidth, dstHeight, true);
 
@@ -114,5 +124,17 @@ public class ImgThread extends Thread{
         Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bmp.setPixels(rgba, 0 , width, 0, 0, width, height);
         return bmp;
+    }
+
+    private static Bitmap getVideoThumnail(String videoName, long timeUs) {
+        MediaMetadataRetriever media = new MediaMetadataRetriever();
+        String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/smart_camera/";
+        media.setDataSource(dir + videoName);
+        // 获取帧
+        // OPTION_CLOSEST 在给定的时间，检索最近一个帧，这个帧不一定是关键帧。
+        // OPTION_CLOSEST_SYNC 在给定的时间，检索最近一个关键帧。
+        // OPTION_NEXT_SYNC 在给定时间之后，检索一个关键帧。
+        // OPTION_PREVIOUS_SYNC 在给定时间之前，检索一个关键帧。
+        return media.getFrameAtTime(timeUs, MediaMetadataRetriever.OPTION_CLOSEST);
     }
 }

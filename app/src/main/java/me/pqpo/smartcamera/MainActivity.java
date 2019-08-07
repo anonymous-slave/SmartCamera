@@ -68,16 +68,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            int REQUEST_CODE_CONTACT = 101;
-//            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-//            for (String str : permissions) {
-//                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-//                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
-//                    return;
-//                }
-//            }
-//        }
+        if (Build.VERSION.SDK_INT >= 23) {
+            int REQUEST_CODE_CONTACT = 101;
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            for (String str : permissions) {
+                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                    return;
+                }
+            }
+        }
 
         initMaskView();
         initScannerParams();
