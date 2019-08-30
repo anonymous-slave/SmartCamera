@@ -41,6 +41,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivDialog;
     private boolean granted = false;
     private static TCPClient mTcpClient;
+    private static String ts_last = "";
+    private static long total_time = 0;
+    private static Integer nFrame = 0;
+    private static Integer targetFPS = 3;
+    private static long last_timestamp = 0;
+    private static long start_timestamp = 0;
+
+
 
     protected void onCreate(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -122,14 +130,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected TCPClient doInBackground(String... message) {
-
             //we create a TCPClient object and
             mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
                 @Override
                 //here the messageReceived method is implemented
                 public void messageReceived(String message) {
                     //this method calls the onProgressUpdate
-                    publishProgress(message);
+                    long timeStamp = System.currentTimeMillis();
+                    if (last_timestamp == 0) {
+                        start_timestamp = timeStamp;
+                    }
+                    if (timeStamp - last_timestamp > 1000 / targetFPS) {
+                        publishProgress(message);
+                        nFrame += 1;
+                        last_timestamp = timeStamp;
+                        Log.e("test FPS",  Float.toString( (float)nFrame/( ((float)(timeStamp - start_timestamp))/1000)));
+                    }
 //                    Log.e("tcpReceived1", message);
                 }
             });
@@ -142,6 +158,15 @@ public class MainActivity extends AppCompatActivity {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
             Log.e("tcpReceived", values[0]);
+//            nFrame += 1;
+//            String tmp = values[0].replaceAll("\\s+", "");
+//            if (ts_last != "") {
+//                Long time_diff = Long.valueOf(tmp) - Long.valueOf(ts_last);
+//                Log.e("test Time diff ", Long.toString(time_diff));
+//                total_time += time_diff;
+//            }
+//            ts_last = tmp;
+//            Log.e("test FPS", Float.toString( (float)nFrame / (total_time / 1000000) ));
 
 //            //in the arrayList we add the messaged received from server
 //            arrayList.add(values[0]);

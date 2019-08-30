@@ -49,7 +49,7 @@ public class ImgThread extends Thread{
 
         int dstWidth = 1920;
         int dstHeight = 1080;
-        int quality = 100;
+        int quality = 80;
 
         if (imgMode.equals("camera")){
             bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
@@ -77,8 +77,8 @@ public class ImgThread extends Thread{
         p.setTextSize(60);//设置字体大小
         canvas.drawText(this.timestamp,Math.round(dstWidth  * 3 / 4) + 20,Math.round(dstHeight * 3 / 4)+130,p);//在画布上绘制文字，即在位图上绘制文字
 
-        Log.e("width:",Integer.toString(Math.round(dstWidth * 3 / 4)));
-        Log.e("height:",Integer.toString(Math.round(dstHeight * 3 / 4)));
+        Log.i("width:",Integer.toString(Math.round(dstWidth * 3 / 4)));
+        Log.i("height:",Integer.toString(Math.round(dstHeight * 3 / 4)));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, quality, baos); //bm is the bitmap object

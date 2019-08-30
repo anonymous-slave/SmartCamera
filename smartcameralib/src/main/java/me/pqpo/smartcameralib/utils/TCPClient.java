@@ -9,8 +9,10 @@ import java.net.Socket;
 public class TCPClient {
 
     private String serverMessage;
-    public static final String SERVERIP = "138.68.21.31"; //your computer IP address
-    public static final int SERVERPORT = 8888;
+//    public static final String SERVERIP = "138.68.21.31"; //your computer IP address
+    public static final String SERVERIP = "52.183.17.63"; //your computer IP address
+
+    public static final int SERVERPORT = 5001;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
 
@@ -74,13 +76,13 @@ public class TCPClient {
                     if (serverMessage != null && mMessageListener != null) {
                         //call the method messageReceived from MyActivity class
                         mMessageListener.messageReceived(serverMessage);
-                        Log.e("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
+                        Log.i("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
                     }
                     serverMessage = null;
 
                 }
 
-                Log.e("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
+                Log.i("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
 
             } catch (Exception e) {
 
