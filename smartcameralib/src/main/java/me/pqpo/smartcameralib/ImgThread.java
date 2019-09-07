@@ -24,7 +24,7 @@ public class ImgThread extends Thread{
     private TCPClient myTcpClient;
     private SmartCameraView camera;
     private String timestamp;
-    private String imgMode = "video"; // video & camera
+    private String imgMode = "camera"; // video & camera
 
 
 //    public ImgThread(byte[] data, Size size, TCPClient mTcpClient){
@@ -69,7 +69,9 @@ public class ImgThread extends Thread{
         p.setColor(Color.WHITE);       //设置画笔颜色
         p.setStyle(Paint.Style.FILL);  //设置画笔模式为填充
         p.setStrokeWidth(10f);         //设置画笔宽度为10px
-        canvas.drawRect(Math.round(dstWidth * 3 / 4),Math.round(dstHeight * 3 / 4),width,height,p);
+        canvas.drawRect(Math.round(dstWidth * 3 / 4),Math.round(dstHeight * 3 / 4),dstWidth,dstHeight,p);
+//        Log.e("littlewidth:",Integer.toString(width));
+//        Log.e("littleheight:",Integer.toString(height));
 
 
         p.setColor(Color.BLACK);//设置画笔颜色
