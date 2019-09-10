@@ -25,6 +25,10 @@ public class ImgThread extends Thread{
     private SmartCameraView camera;
     private String timestamp;
     private String imgMode = "video"; // video & camera
+    private int q;
+    private int fps;
+    private int width;
+    private int height;
 
 
 //    public ImgThread(byte[] data, Size size, TCPClient mTcpClient){
@@ -33,10 +37,14 @@ public class ImgThread extends Thread{
 //        this.myTcpClient = mTcpClient;
 //    }
 
-    public ImgThread(SmartCameraView smartCameraView, TCPClient mTcpClient, String timestamp){
+    public ImgThread(SmartCameraView smartCameraView, TCPClient mTcpClient, String timestamp, int fps, int quality, int width, int height){
         this.camera = smartCameraView;
         this.myTcpClient = mTcpClient;
         this.timestamp = timestamp;
+        this.q = quality;
+        this.fps = fps;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -47,13 +55,13 @@ public class ImgThread extends Thread{
         int width = size.getWidth();
         int height = size.getHeight();
 
-        int dstWidth = 1920;
-        int dstHeight = 1080;
-        int quality = 80;
+        int dstWidth = this.width;
+        int dstHeight = this.height;
+        int quality = this.q;
 
         if (imgMode.equals("camera")){
             bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
-        }else{
+        } else{
             long timeStamp = System.currentTimeMillis();
             Log.e("Video TimeStamp", Long.toString(timeStamp%60000*1000));
             bm = getVideoThumnail("output.mkv", timeStamp%60000*1000);

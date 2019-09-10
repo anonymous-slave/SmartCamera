@@ -8,8 +8,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +21,9 @@ import android.widget.Toast;
 import com.google.android.cameraview.CameraImpl;
 import com.google.android.cameraview.base.Size;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                new ImgThread(mCameraView,mTcpClient).start();
-                new connectTask().execute("");
+                new Profiler().execute("");
+//                new connectTask().execute("");
 //                mCameraView.takePicture();
 //                mCameraView.stopScan();
             }
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 //            // notify the adapter that the data set has changed. This means that new message received
 //            // from server was added to the list
 //            mAdapter.notifyDataSetChanged();
-            new ImgThread(mCameraView,mTcpClient,values[0]).start();
+            new ImgThread(mCameraView,mTcpClient,values[0],80,100, 1920,1080).start();
 
         }
     }
@@ -323,5 +325,94 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.dismiss();
         }
         mCameraView.stopScan();
+    }
+
+
+
+
+
+    public static class Profiler extends AsyncTask<String,String, TCPClient> {
+        private int profile_fps = 15;
+        private int n_fps = 3;
+
+        private int profile_quality = 100;
+        private int n_quality = 4;
+
+        private int profile_height = 1920;
+        private int profile_width = 1080;
+        private int n_res = 2;
+
+        private int n_test = 50;
+        private int n_count = 0;
+        private boolean profile_done = false;
+
+        @Override
+        protected TCPClient doInBackground(String... message) {
+            //we create a TCPClient object and
+            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
+                //here the messageReceived method is implemented
+
+                public void messageReceived(String message) {
+                    long timeStamp = System.currentTimeMillis();
+                    if (last_timestamp == 0) {
+                        start_timestamp = timeStamp;
+                    }
+                    if (timeStamp - last_timestamp > 1000 / profile_fps) {
+                        publishProgress(message);
+                        nFrame += 1;
+                        last_timestamp = timeStamp;
+                        Log.e("test FPS",  Float.toString( (float)nFrame/( ((float)(timeStamp - start_timestamp))/1000)));
+                    }
+                }
+            });
+            mTcpClient.run();
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            Log.e("tcpReceived", values[0]);
+            this.getConfigure(values[0]);
+            new ImgThread(mCameraView,mTcpClient, "", this.profile_fps, this.profile_quality, this.profile_height, this.profile_width).start();
+        }
+
+        private void getConfigure(String x) {
+            if (n_count % n_test != 0 || profile_done) {
+
+            } else if (n_count == n_test * n_fps * n_quality * n_res) {
+                Log.e("Profile", x);
+                profile_done = true;
+            } else {
+                int n = n_count / n_test;
+
+                if ( ( n / n_quality / n_res ) % n_fps == 0) {
+                    profile_fps = 15;
+                } else if ( ( n / n_quality / n_res ) % n_fps == 1) {
+                    profile_fps = 10;
+                } else if ( ( n / n_quality / n_res ) % n_fps == 2) {
+                    profile_fps = 5;
+                }
+
+                if ( ( n / n_res ) % n_quality == 0) {
+                    profile_quality = 100;
+                } else if ( ( n / n_res ) % n_quality == 1) {
+                    profile_quality = 70;
+                } else if ( ( n / n_res ) % n_quality == 2) {
+                    profile_quality = 40;
+                } else if ( ( n / n_res ) % n_quality == 3) {
+                    profile_quality = 10;
+                }
+
+                if ( n % n_res == 0 ) {
+                    profile_height = 1920; profile_width = 1080;
+                } else if ( n % n_res == 1 ) {
+                    profile_height = 1080; profile_width = 720;
+                }
+            }
+            Log.e("Profile", Integer.toString(profile_height) + Integer.toString(profile_width) + Integer.toString(profile_fps) +  Integer.toString(profile_quality) );
+            n_count += 1;
+
+        }
     }
 }
