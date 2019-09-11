@@ -27,8 +27,8 @@ public class ImgThread extends Thread{
     private String imgMode = "video"; // video & camera
     private int q;
     private int fps;
-    private int width;
-    private int height;
+    private int assignedWidth;
+    private int assignedHeight;
 
 
 //    public ImgThread(byte[] data, Size size, TCPClient mTcpClient){
@@ -43,8 +43,8 @@ public class ImgThread extends Thread{
         this.timestamp = timestamp;
         this.q = quality;
         this.fps = fps;
-        this.width = width;
-        this.height = height;
+        this.assignedWidth = width;
+        this.assignedHeight = height;
     }
 
     @Override
@@ -55,8 +55,8 @@ public class ImgThread extends Thread{
         int width = size.getWidth();
         int height = size.getHeight();
 
-        int dstWidth = this.width;
-        int dstHeight = this.height;
+        int dstWidth = this.assignedWidth;
+        int dstHeight = this.assignedHeight;
         int quality = this.q;
 
         if (imgMode.equals("camera")){
@@ -85,8 +85,9 @@ public class ImgThread extends Thread{
         p.setTextSize(60);//设置字体大小
         canvas.drawText(this.timestamp,Math.round(dstWidth  * 3 / 4) + 20,Math.round(dstHeight * 3 / 4)+130,p);//在画布上绘制文字，即在位图上绘制文字
 
-        Log.i("width:",Integer.toString(Math.round(dstWidth * 3 / 4)));
-        Log.i("height:",Integer.toString(Math.round(dstHeight * 3 / 4)));
+        Log.i("width",Integer.toString(Math.round(dstWidth * 3 / 4)));
+        Log.i("height",Integer.toString(Math.round(dstHeight * 3 / 4)));
+        Log.i("timestamp",this.timestamp);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, quality, baos); //bm is the bitmap object

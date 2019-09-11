@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
             super.onProgressUpdate(values);
             Log.e("tcpReceived", values[0]);
             this.getConfigure(values[0]);
-            new ImgThread(mCameraView,mTcpClient, "", this.profile_fps, this.profile_quality, this.profile_height, this.profile_width).start();
+            new ImgThread(mCameraView,mTcpClient, values[0], this.profile_fps, this.profile_quality, this.profile_height, this.profile_width).start();
         }
 
         private void getConfigure(String x) {
