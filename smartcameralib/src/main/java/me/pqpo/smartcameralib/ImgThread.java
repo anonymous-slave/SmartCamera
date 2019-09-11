@@ -77,7 +77,7 @@ public class ImgThread extends Thread{
         p.setColor(Color.WHITE);       //设置画笔颜色
         p.setStyle(Paint.Style.FILL);  //设置画笔模式为填充
         p.setStrokeWidth(10f);         //设置画笔宽度为10px
-        canvas.drawRect(Math.round(dstWidth * 3 / 4),Math.round(dstHeight * 3 / 4),width,height,p);
+        canvas.drawRect(Math.round(dstWidth * 3 / 4),Math.round(dstHeight * 3 / 4),dstWidth,dstHeight,p);
 
 
         p.setColor(Color.BLACK);//设置画笔颜色
