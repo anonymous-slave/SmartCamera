@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
         private int profile_width = 1080;
         private int n_res = 2;
 
-        private int n_test = 50;
+        private int n_test = 10;
         private int n_count = 0;
         private boolean profile_done = false;
 
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                     profile_height = 1080; profile_width = 720;
                 }
             }
-            Log.e("Profile", Integer.toString(profile_height) + Integer.toString(profile_width) + Integer.toString(profile_fps) +  Integer.toString(profile_quality) );
+            Log.e("Profile", Integer.toString(n_count) + " " + Integer.toString(profile_height)  + " " +  Integer.toString(profile_width)  + " " +  Integer.toString(profile_fps)  + " " +   Integer.toString(profile_quality) );
             n_count += 1;
 
         }
