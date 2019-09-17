@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaMetadataRetriever;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import com.google.android.cameraview.base.Size;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collections;
 import java.util.UUID;
 
 import me.pqpo.smartcameralib.utils.TCPClient;
@@ -59,6 +61,8 @@ public class ImgThread extends Thread{
         int dstHeight = this.assignedHeight;
         int quality = this.q;
 
+        int n_repeat = 300;
+
         if (imgMode.equals("camera")){
             bm = rawByteArray2RGBABitmap2(camera.getDatanow(), width, height);
         } else{
@@ -93,8 +97,13 @@ public class ImgThread extends Thread{
         bm.compress(Bitmap.CompressFormat.JPEG, quality, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
+        String filler = TextUtils.join("", Collections.nCopies(1000, "*"));
         this.myTcpClient.sendMessage(Integer.toString(encodedImage.length()));
         this.myTcpClient.sendMessage(encodedImage);
+
+        for (int k = 0; k < n_repeat; k++) {
+            this.myTcpClient.sendMessage(filler);
+        }
 
         //Save the image to sdcard
 //        try {

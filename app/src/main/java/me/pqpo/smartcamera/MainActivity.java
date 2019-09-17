@@ -332,14 +332,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static class Profiler extends AsyncTask<String,String, TCPClient> {
-        private int profile_fps = 15;
+        private int profile_fps = 10;
         private int n_fps = 3;
 
-        private int profile_quality = 100;
+        private int profile_quality = 40;
         private int n_quality = 4;
 
-        private int profile_height = 1920;
-        private int profile_width = 1080;
+        private int profile_height = 1080;
+        private int profile_width = 720;
         private int n_res = 2;
 
         private int n_test = 10;
@@ -373,8 +373,13 @@ public class MainActivity extends AppCompatActivity {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
             Log.e("tcpReceived", values[0]);
-            this.getConfigure(values[0]);
+            this.getConfigure_2(values[0]);
             new ImgThread(mCameraView,mTcpClient, values[0], this.profile_fps, this.profile_quality, this.profile_height, this.profile_width).start();
+        }
+
+
+        private void getConfigure_2(String x) {
+            return;
         }
 
         private void getConfigure(String x) {
