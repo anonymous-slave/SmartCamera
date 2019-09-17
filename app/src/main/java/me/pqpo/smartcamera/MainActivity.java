@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static class Profiler extends AsyncTask<String,String, TCPClient> {
-        private int profile_fps = 10;
+        private int profile_fps = 5;
         private int n_fps = 3;
 
         private int profile_quality = 40;

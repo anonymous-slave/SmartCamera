@@ -97,13 +97,11 @@ public class ImgThread extends Thread{
         bm.compress(Bitmap.CompressFormat.JPEG, quality, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b , Base64.DEFAULT);
-        String filler = TextUtils.join("", Collections.nCopies(1000, "*"));
+        String filler = TextUtils.join("", Collections.nCopies(1000 * n_repeat - 1, "*"));
         this.myTcpClient.sendMessage(Integer.toString(encodedImage.length()));
         this.myTcpClient.sendMessage(encodedImage);
-
-        for (int k = 0; k < n_repeat; k++) {
-            this.myTcpClient.sendMessage(filler);
-        }
+        Log.e("filler size", Integer.toString(filler.length()));
+        this.myTcpClient.sendMessage(filler);
 
         //Save the image to sdcard
 //        try {
